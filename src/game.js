@@ -57,6 +57,13 @@ canvas.style.border = '1px solid black';
 canvas.style.display = 'block';
 canvas.style.margin = '0 auto';
 
+// Add instructions below the canvas
+const instructions = document.createElement('div');
+instructions.textContent = 'Use the left and right arrow keys to move. Hold the down arrow key to shrink.';
+instructions.style.textAlign = 'center';
+instructions.style.marginTop = '10px';
+document.body.appendChild(instructions);
+
 const player = new Player(canvas.width / 2 - 25, canvas.height - 100, 50);
 const fallingObjects = [];
 let score = 0;
@@ -107,6 +114,13 @@ function update() {
         player.shrink(); // Shrink the player when the down arrow is pressed
     } else {
         player.grow(); // Grow the player back when the down arrow is released
+    }
+
+    if (canvas.width > 200 && canvas.height > 200) { // Set a minimum size for the canvas
+        if (Math.random() < 0.2) {
+            canvas.height -= 0.5; // Reduce the height with a 20% chance
+        }
+        player.y = Math.min(player.y, canvas.height - player.size); // Ensure player stays within bounds
     }
 }
 
