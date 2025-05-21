@@ -3,7 +3,12 @@ class FallingObject {
         this.x = x;
         this.y = y;
         this.size = size;
-        this.speed = Math.random() * 3 + 2; // Random speed between 2 and 5
+        this.speed = Math.random() * 5 + 2;
+
+        // Load a random image from the images directory
+        const imageIndex = Math.floor(Math.random() * 5) + 1; // Assuming 5 images named 1.png, 2.png, etc.
+        this.image = new Image();
+        this.image.src = `images/image_${imageIndex}.png`;
     }
 
     update() {
@@ -11,8 +16,7 @@ class FallingObject {
     }
 
     draw(ctx) {
-        ctx.fillStyle = 'red';
-        ctx.fillRect(this.x, this.y, this.size, this.size);
+        ctx.drawImage(this.image, this.x, this.y, this.size, this.size);
     }
 }
 
@@ -21,6 +25,8 @@ class Player {
         this.x = x;
         this.y = y;
         this.size = size;
+        this.image = new Image();
+        this.image.src = 'images/whale.png'; // Use the whale image
     }
 
     move(direction) {
@@ -29,23 +35,34 @@ class Player {
     }
 
     draw(ctx) {
-        ctx.fillStyle = 'blue';
-        ctx.fillRect(this.x, this.y, this.size, this.size);
+        ctx.drawImage(this.image, this.x, this.y, this.size, this.size); // Draw the whale image
     }
+
+    shrink() {
+        this.size = Math.max(this.size - 1, 10); // Shrink to half the original size
+    }
+
+    grow() {
+        this.size = Math.min(this.size + 1, 100); // Slowly grow back to the original size
+    }
+
 }
 
 const canvas = document.createElement('canvas');
 const ctx = canvas.getContext('2d');
 document.body.appendChild(canvas);
-canvas.width = 400;
-canvas.height = 600;
+canvas.width = 600;
+canvas.height = 550;
+canvas.style.border = '1px solid black';
+canvas.style.display = 'block';
+canvas.style.margin = '0 auto';
 
-const player = new Player(canvas.width / 2 - 25, canvas.height - 50, 50);
+const player = new Player(canvas.width / 2 - 25, canvas.height - 100, 50);
 const fallingObjects = [];
 let score = 0;
 
 function spawnFallingObject() {
-    const size = Math.random() * 30 + 20; // Random size between 20 and 50
+    const size = Math.random() * 50 + 30; // Random size between 20 and 50
     const x = Math.random() * (canvas.width - size);
     fallingObjects.push(new FallingObject(x, 0, size));
 }
@@ -85,6 +102,12 @@ function update() {
             score++;
         }
     });
+
+    if (player.isShrinking) {
+        player.shrink(); // Shrink the player when the down arrow is pressed
+    } else {
+        player.grow(); // Grow the player back when the down arrow is released
+    }
 }
 
 function draw() {
@@ -106,6 +129,14 @@ document.addEventListener('keydown', (event) => {
         player.move(-1);
     } else if (event.key === 'ArrowRight') {
         player.move(1);
+    } else if (event.key === 'ArrowDown') {
+        player.isShrinking = true; // Start shrinking
+    }
+});
+
+document.addEventListener('keyup', (event) => {
+    if (event.key === 'ArrowDown') {
+        player.isShrinking = false; // Stop shrinking
     }
 });
 

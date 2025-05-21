@@ -1,19 +1,6 @@
 // filepath: falling-objects-game/src/main.js
 
-const canvas = document.createElement('canvas');
-const ctx = canvas.getContext('2d');
-document.body.appendChild(canvas);
 
-canvas.width = 480;
-canvas.height = 320;
-
-let player = {
-    x: canvas.width / 2 - 15,
-    y: canvas.height - 30,
-    width: 30,
-    height: 30,
-    speed: 5
-};
 
 let fallingObjects = [];
 let gameOver = false;
